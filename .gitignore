@@ -1,0 +1,16 @@
+# Private local setup notes; never publish device records.
+README.txt
+VERIFICATION.txt
+# Build output and private signing material.
+/build/
+/dist/
+/signing/
+*.apk
+*.idsig
+*.p12
+*.jks
+*.keystore
+*password*
+.env*
+__pycache__/
+.DS_Store
