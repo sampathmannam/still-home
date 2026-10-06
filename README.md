@@ -1,75 +1,101 @@
 # Still Home
 
-A small, open-source Android launcher with a dark home screen, local app search,
-privacy settings shortcuts, and access to existing AI assistants.
-
-Still Home works without Internet permission. It has no accounts, ads, analytics,
-tracking SDKs, or bundled third-party libraries. It is an early personal project,
-not an independently audited security product or a replacement operating system.
+An offline Android launcher that guides you through a more private phone setup.
+It keeps existing AI features available and helps you choose privacy-focused apps.
 
 [Download the latest release](https://github.com/sampathmannam/still-home/releases/latest)
-· [Privacy](PRIVACY.md) · [App replacement guide](docs/APP-REPLACEMENTS.md)
+· [Privacy policy](PRIVACY.md) · [How automation works](docs/AUTOMATION.md)
+· [App choices](docs/APP-REPLACEMENTS.md)
 
-## Features
+## Guided setup
 
-- Dark appearance by default; choose Dark, Light, or System in **Privacy → Appearance**.
-- Home screen with a clock, browsing shortcuts, essentials, and an AI section.
-- App drawer with local search and long-press access to Android app settings.
-- Android-reported VPN connection, screen-lock status, and security-patch date.
-- Shortcuts to Android's VPN, permissions, location, advertising, and update controls.
-- Launch existing Motorola Qira/Moto AI, ChatGPT, Grok, and installed PocketPal AI.
-- Shortcuts to compatible installed open-source apps.
+Version 2.0 replaces the settings-link list with a six-step setup:
 
-<img src="docs/dark-home-emulator.png" width="280" alt="Still Home dark home screen on a test emulator">
+1. **Quick defaults:** after Android's consent, shorten the screen timeout to one
+   minute without lengthening an existing shorter timeout, and disable brief
+   password-character previews in supported fields.
+2. **Connection:** open Proton VPN and review Android's always-on/blocking controls.
+3. **Typing:** get, enable, and choose HeliBoard using Android's keyboard controls.
+4. **Everyday apps:** see installed starter apps and a catalog of official sources.
+5. **Android controls:** review lock-screen privacy, permissions, ads, and updates.
+6. **AI and home:** keep assistants available, explore on-device AI, and choose a launcher.
 
-*Emulator preview: installed apps and connection status differ on each phone.*
+Progress stays on the phone. Live checks are distinct from review notes the user
+marks themselves. Skipping a step never labels it protected. Returning from settings
+refreshes checks, and the summary identifies unfinished items.
 
-## Install
+<img src="docs/welcome.png" width="280" alt="Still Home guided setup welcome screen">
 
-Requires Android 11 or later. Download `StillHome.apk` from this repository's
-release page and install it using Android's package installer. Permit installation
-from that source only for the installation if Android asks. Open Still Home, then
-choose **Privacy → Choose your home app**.
+*Android emulator preview; actual status and installed apps depend on the phone.*
 
-Retain your original launcher. To switch back, open Android **Settings → Apps →
-Default apps → Home app**. This app does not root, unlock, flash, or wipe a phone.
-It cannot silently install other apps or change their permissions.
+## What is automatic?
 
-Theme changes apply to Still Home. Use Android's display settings and each app's
-appearance settings for dark mode elsewhere. Widgets, work-profile app discovery,
-and private-space integration are not implemented.
+| Feature | Behavior |
+| --- | --- |
+| Local setup checks | Run when the app opens or returns to the foreground. |
+| Dark appearance | Default for Still Home; Light and System are also available. |
+| Recent-app preview | Disabled for Still Home on Android 13+; normal screenshots still work. |
+| Timeout and password previews | Apply only after the user chooses Apply and grants Android's special settings access. Read back to confirm. |
+| Undo | Restores recorded values only when the current value still matches what Still applied. Newer user choices are preserved. |
+| VPN, keyboard, app defaults, permissions | Guided Android confirmations; these are not silently changed. |
+| App installation | Opens official store/project destinations; the store or Android installer handles confirmation and updates. |
 
-## Privacy and security scope
+Installation alone does not configure the phone or start a background service.
+**Open Still Home and choose Start my setup.** Android intentionally restricts
+ordinary apps from silently changing privileged settings. No root, accessibility
+automation, device-owner enrollment, ADB grant, or factory reset is required.
 
-The sole requested permission is `android.permission.ACCESS_NETWORK_STATE`.
-App names/icons and search text are handled on the device. Search is not retained;
-the theme preference is stored locally. Android cloud backup is disabled for this
-app. Other apps opened from the launcher retain their own permissions and policies.
+The screen timeout is separate from lock delay. Android values changed by Still
+remain after uninstalling; use Undo first if you want the previous values back.
 
-**VPN detected** means Android reports a VPN transport on the active connection.
-It does not verify the public IP, DNS leaks, routing for every app, or a kill switch.
-A skin or launcher does not add GrapheneOS kernel hardening, sandboxed Google Play,
-firmware updates, or anonymity. Cloud assistants receive submitted content.
+## Install and use
 
-## Build
+Download `StillHome.apk` from this repository's release page. Requires Android 11+.
+Install using Android's package installer, permitting that source if prompted, then
+open the app. Existing installations using the release key can update in place.
 
-Install Python 3, JDK 17 or newer, Android SDK platform `android-36`, and Android
-build tools `36.1.0`. Set `ANDROID_SDK_ROOT` and `JAVA_HOME`, then run:
+Still Home can guide setup without becoming the default launcher. To use it as your
+home screen, choose **Setup → AI and your home → Choose your home app**. Keep your
+original launcher; switch back using Android **Settings → Apps → Default apps → Home app**.
+
+The app includes local app search, app-info shortcuts, dark/light/system themes,
+phone/tablet navigation, and existing Motorola Qira/Moto AI, ChatGPT, Grok, and
+PocketPal shortcuts when those apps are available. Widgets, work-profile app
+integration, and private-space integration are not implemented.
+
+## Privacy boundaries
+
+No Internet permission, ads, accounts, analytics, tracking SDKs, or third-party app
+libraries. Android cloud backup is disabled. Two permissions are declared:
+
+- `ACCESS_NETWORK_STATE` reads Android's active network status.
+- `WRITE_SETTINGS` is optional special access, granted in Android's own screen.
+  The implementation writes only screen timeout and password-character previews.
+
+VPN detection is not a public-IP/DNS leak test or proof of always-on blocking.
+Open-source apps can still use account syncing, backups, or external services.
+Cloud assistants receive submitted content. A launcher does not provide GrapheneOS
+hardening or make a phone unhackable. This is an early project without an independent
+security audit. See the [research and API boundaries](docs/AUTOMATION.md).
+
+## Build and checks
+
+Use Python 3, JDK 17+, Android SDK platform `android-36`, and build tools `36.1.0`.
+Set `ANDROID_SDK_ROOT` and `JAVA_HOME`:
 
 ```sh
+python3 tests/run.py
 python3 build.py --build-dir build --signing-dir /private/path/still-home-signing --output dist/StillHome.apk
 ```
 
-The build script uses local SDK tools and downloads no dependencies. Installing
-the SDK/JDK and running hosted CI require network access. The signing directory
-contains a private key and password; keep it outside this repository and retain it
-for compatible updates. A locally generated key differs from the published release
-key. CI uses a disposable key, never the release key, and does not publish an APK.
+The build script downloads no dependencies. SDK setup and hosted CI need network
+access. Keep the signing key/password outside the repository and retain them for
+compatible updates. Hosted CI uses a disposable key and checks the packaged permission
+boundary; it does not publish that APK. Reproducible binaries have not been established.
 
-[Verification notes](docs/VERIFICATION.md) describe what has been tested. Build
-success is not a security audit. Binary reproducibility has not been established.
+[Verification notes](docs/VERIFICATION.md) distinguish emulator checks from device testing.
 
 ## License
 
-[MIT](LICENSE.txt). Android SDK tools and external apps have their own licenses.
-App icons are loaded from installed apps and are not bundled with this project.
+[MIT](LICENSE.txt). SDK tools and external apps retain their own licenses. App icons
+are loaded from installed apps, not bundled as part of the project.

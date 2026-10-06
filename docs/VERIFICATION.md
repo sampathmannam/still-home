@@ -1,5 +1,31 @@
 # Verification
 
+## Version 2.0
+
+The new guided setup is checked with the release APK on an isolated Android 17
+emulator. Public System-setting access is granted through Android's own UI, not
+through an ADB permission grant. Shell commands seed/read emulator values for tests.
+
+Checked so far:
+
+- Signed APK builds and requests only ACCESS_NETWORK_STATE and WRITE_SETTINGS.
+- A fresh launch shows the dark welcome screen and six-step setup.
+- Declining special settings access leaves the two seeded Android values unchanged.
+- Granting access applies the one-minute timeout and disables password previews;
+  values are read back from Android to verify the result.
+- Undo preserves a newer 30-second timeout and restores the prior password-preview value.
+- Reapplying defaults keeps an existing 30-second timeout unchanged.
+- Foreground text/action colors pass a 4.5:1 contrast check in both themes.
+- Pure Java regression checks cover tighter timeouts, missing readings, and undo
+  preserving newer user choices.
+
+Further functional results are added here after the final flow checks. These are
+functional checks, not an independent security audit. The requested physical phone
+has not yet been available for this version; no claim of physical-phone deployment
+or GrapheneOS-equivalent security is made.
+
+## Earlier release
+
 Version 1.2 was built and signed locally using Android SDK 36 and build tools 36.1.0.
 The signed APK's manifest requests only ACCESS_NETWORK_STATE; no INTERNET permission
 is present. These are functional checks, not an independent security audit.

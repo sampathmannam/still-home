@@ -1,17 +1,29 @@
 # Security
 
-This is an early project and has not received an independent security audit.
-Use the latest release and keep Android and other apps updated.
+This early project has not had an independent security audit. Keep Android, Still
+Home, and other apps updated. Report vulnerabilities through this repository's
+private vulnerability reporting page. Do not post keys or personal phone records
+in public issues. No guaranteed security support or response time is offered.
 
-Report a vulnerability through this repository's private vulnerability reporting
-page when available. Avoid posting personal device logs, keys, IP addresses, or
-sensitive reproduction data in public issues. There is no paid support service or
-guaranteed response time.
+## Permission boundary
 
-The intended app permission boundary is ACCESS_NETWORK_STATE only. Contributions
-that add Internet access, tracking, privileged services, background collection, or
-silent settings changes need explicit design discussion and a privacy-policy update.
+ACCESS_NETWORK_STATE is used for local network status. WRITE_SETTINGS is optional
+special access, requested through Android only after Apply/Undo. The only allowed
+writes are SCREEN_OFF_TIMEOUT and TEXT_SHOW_PASSWORD. Undo records are private,
+written before changes, and used only when current values still match applied values.
+Newer user choices must be preserved. Unavailable values must not be labelled verified.
 
-Still Home cannot enforce device-wide privacy controls. It opens Android settings;
-Android and the individual applications enforce those controls. Security claims
-must describe measured behavior and its limits.
+No Internet, WRITE_SECURE_SETTINGS, accessibility service, device administration,
+installer, boot receiver, or VPN service is included. Changes to that boundary require
+explicit design discussion, tests, and privacy-policy updates.
+
+## Reporting and testing
+
+Declining access must not mutate settings. Partial failures must be reported without
+claiming complete success. Review notes are not system verification. Test Apply, Undo,
+permission revocation, restart/resume, and preservation of tighter timeouts when changing
+setup behavior. Test keyboard and home selection through Android's own UI.
+
+A successful build or permission check is not evidence that every phone is secured.
+OEM restrictions and future Android changes can affect supported settings. System
+settings persist after uninstall; undo must be used first when restoration is desired.
