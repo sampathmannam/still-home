@@ -6,10 +6,11 @@ The new guided setup is checked with the release APK on an isolated Android 17
 emulator. Public System-setting access is granted through Android's own UI, not
 through an ADB permission grant. Shell commands seed/read emulator values for tests.
 
-Checked so far:
+Verified:
 
 - Signed APK builds and requests only ACCESS_NETWORK_STATE and WRITE_SETTINGS.
-- A fresh launch shows the dark welcome screen and six-step setup.
+- A fresh launch shows the dark welcome screen and six-step setup. Navigation
+  from the first through the third step was exercised on the emulator.
 - Declining special settings access leaves the two seeded Android values unchanged.
 - Granting access applies the one-minute timeout and disables password previews;
   values are read back from Android to verify the result.
@@ -19,10 +20,17 @@ Checked so far:
 - Pure Java regression checks cover tighter timeouts, missing readings, and undo
   preserving newer user choices.
 
-Further functional results are added here after the final flow checks. These are
-functional checks, not an independent security audit. The requested physical phone
-has not yet been available for this version; no claim of physical-phone deployment
-or GrapheneOS-equivalent security is made.
+The signed update was also installed in place on a Motorola Edge 60 Fusion running
+Android 17. Its setup screen correctly read the existing one-minute timeout and
+disabled password previews; its home screen reported the active VPN. These checks
+do not establish that every guided action works on every phone.
+
+The emulator UI-automation service became unreliable during the remaining flow
+checks; those checks were stopped. Complete restart/resume, large-font and wide-screen
+interaction, special-access revocation, and every external settings destination
+remain unverified for 2.0. The physical phone disconnected before further configuration
+checks. These are functional checks, not an independent security audit or evidence
+of GrapheneOS-equivalent security.
 
 ## Earlier release
 
